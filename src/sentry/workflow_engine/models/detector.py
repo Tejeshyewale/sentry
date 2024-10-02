@@ -39,7 +39,7 @@ class Detector(DefaultFieldsModel, OwnerModel):
         ]
 
     def evaluate_composition(self, data_packet):
-        return get_detector_handler(self)(data_packet)
+        return get_detector_handler(self).evaluate(data_packet)
 
     def evaluate_inheritance(self, data_packet):
         return get_detector_subclass(self).evaluate(data_packet)

@@ -32,7 +32,7 @@ def get_detector_subclass(detector):
             # Sucks because we have to make another query
             return detector_subclass.objects.get(id=detector.id)
         elif "Copy data method":
-            # This isn't great since we already need to add more fields
+            # This isn't great since we will constantly need to add more fields
             return detector_subclass(id=detector.id, name=detector.name, ...)
         elif "hack class":
             # Hack the detector itself to load the appropriate type. I'm sure this will play havok with typing
