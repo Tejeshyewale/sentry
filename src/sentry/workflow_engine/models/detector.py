@@ -5,6 +5,8 @@ from sentry.backup.scopes import RelocationScope
 from sentry.db.models import DefaultFieldsModel, FlexibleForeignKey, region_silo_model
 from sentry.models.owner_base import OwnerModel
 from sentry.workflow_engine.models.data_source_detector import DataSourceDetector
+from sentry.workflow_engine.models.detector_composition import get_detector_handler
+from sentry.workflow_engine.models.detector_inheritence import get_detector_subclass
 
 
 @region_silo_model
@@ -35,3 +37,9 @@ class Detector(DefaultFieldsModel, OwnerModel):
                 name="workflow_engine_detector_org_name",
             )
         ]
+
+    def evaluate_composition(self, data_packet):
+        return get_detector_handler(self)(data_packet)
+
+    def evaluate_inheritance(self, data_packet):
+        return get_detector_subclass(self).evaluate(data_packet)
