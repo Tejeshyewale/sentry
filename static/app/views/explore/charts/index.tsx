@@ -4,7 +4,6 @@ import * as echarts from 'echarts/core';
 
 import {getInterval} from 'sentry/components/charts/utils';
 import {CompactSelect} from 'sentry/components/compactSelect';
-import {DropdownMenu} from 'sentry/components/dropdownMenu';
 import {CHART_PALETTE} from 'sentry/constants/chartPalette';
 import {IconClock} from 'sentry/icons';
 import {IconGraphLine} from 'sentry/icons/iconGraphLine';
@@ -139,38 +138,25 @@ export function ExploreCharts({query}: ExploreChartsProps) {
               <ChartHeader>
                 <ChartTitle>{dedupedYAxes.join(',')}</ChartTitle>
                 <ChartSettingsContainer>
-                  <DropdownMenu
-                    position="bottom-end"
+                  <CompactSelect
+                    triggerLabel=""
                     triggerProps={{
                       icon: <IconGraphLine />,
-                      size: 'zero',
-                      showChevron: false,
                       borderless: true,
-                      'aria-label': t('Chart Type'),
-                    }}
-                    items={[]}
-                  />
-                  <DropdownMenu
-                    position="bottom-end"
-                    triggerProps={{
-                      icon: <IconClock />,
                       showChevron: false,
-                      borderless: true,
-                      'aria-label': t('Interval'),
                     }}
-                    items={[]}
-                  />
-                  <CompactSelect
-                    triggerProps={{prefix: t('Type')}}
                     value={chartType}
                     options={exploreChartTypeOptions}
                     onChange={option => handleChartTypeChange(option.value, index)}
                   />
                   <CompactSelect
+                    triggerLabel=""
                     value={interval}
                     onChange={({value}) => setInterval(value)}
                     triggerProps={{
-                      prefix: t('Interval'),
+                      icon: <IconClock />,
+                      borderless: true,
+                      showChevron: false,
                     }}
                     options={intervalOptions}
                   />
