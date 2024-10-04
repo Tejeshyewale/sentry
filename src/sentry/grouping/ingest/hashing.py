@@ -118,14 +118,16 @@ def maybe_run_secondary_grouping(
     if is_in_transition(project):
         with metrics.timer("event_manager.secondary_grouping", tags=metric_tags):
             secondary_grouping_config = SecondaryGroupingConfigLoader().get_config_dict(project)
-            secondary_hashes = _calculate_secondary_hashes(project, job, secondary_grouping_config)
+            secondary_hashes = _calculate_secondary_hashes_and_variants(
+                project, job, secondary_grouping_config
+            )[0]
 
     return (secondary_grouping_config, secondary_hashes)
 
 
-def _calculate_secondary_hashes(
+def _calculate_secondary_hashes_and_variants(
     project: Project, job: Job, secondary_grouping_config: GroupingConfig
-) -> list[str]:
+) -> tuple[list[str], dict[str, BaseVariant]]:
     """Calculate secondary hash for event using a fallback grouping config for a period of time.
     This happens when we upgrade all projects that have not opted-out to automatic upgrades plus
     when the customer changes the grouping config.
@@ -146,7 +148,10 @@ def _calculate_secondary_hashes(
     except Exception as err:
         sentry_sdk.capture_exception(err)
 
-    return secondary_hashes
+    # Return an empty variants dictionary because we need the signature of this function to match
+    # that of `_calculate_primary_hashes_and_variants` (so we have to return something), but we
+    # don't ever actually need the variant information
+    return (secondary_hashes, {})
 
 
 def run_primary_grouping(
