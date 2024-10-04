@@ -480,8 +480,8 @@ def test_records_hash_comparison_metric(
         return_value=(primary_hashes, {}),
     ):
         with mock.patch(
-            "sentry.grouping.ingest.hashing._calculate_secondary_hashes",
-            return_value=secondary_hashes,
+            "sentry.grouping.ingest.hashing._calculate_secondary_hashes_and_variants",
+            return_value=(secondary_hashes, {}),
         ):
             save_new_event({"message": "Dogs are great!"}, project)
 
