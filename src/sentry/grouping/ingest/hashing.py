@@ -106,7 +106,7 @@ def _calculate_background_grouping(
 
 def maybe_run_secondary_grouping(
     project: Project, job: Job, metric_tags: MutableTags
-) -> tuple[GroupingConfig, list[str]]:
+) -> tuple[GroupingConfig, list[str], dict[str, BaseVariant]]:
     """
     If the projct is in a grouping config transition phase, calculate a set of secondary hashes for
     the job's event.
@@ -122,7 +122,10 @@ def maybe_run_secondary_grouping(
                 project, job, secondary_grouping_config
             )[0]
 
-    return (secondary_grouping_config, secondary_hashes)
+    # Return an empty variants dictionary because we need the signature of this function to match
+    # that of `run_primary_grouping` (so we have to return something), but we don't ever actually
+    # need the variant information
+    return (secondary_grouping_config, secondary_hashes, {})
 
 
 def _calculate_secondary_hashes_and_variants(
@@ -156,7 +159,7 @@ def _calculate_secondary_hashes_and_variants(
 
 def run_primary_grouping(
     project: Project, job: Job, metric_tags: MutableTags
-) -> tuple[GroupingConfig, list[str]]:
+) -> tuple[GroupingConfig, list[str], dict[str, BaseVariant]]:
     """
     Get the primary grouping config and primary hashes for the event.
     """
@@ -171,9 +174,9 @@ def run_primary_grouping(
         ),
         metrics.timer("event_manager.calculate_event_grouping", tags=metric_tags),
     ):
-        hashes = _calculate_primary_hashes_and_variants(project, job, grouping_config)[0]
+        hashes, variants = _calculate_primary_hashes_and_variants(project, job, grouping_config)
 
-    return (grouping_config, hashes)
+    return (grouping_config, hashes, variants)
 
 
 def _calculate_primary_hashes_and_variants(
